@@ -80,8 +80,11 @@ class _InstructionsPageState extends State<InstructionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Test con una stringa statica per verificare i caratteri accentati
-    String testString = 'Esempio: Caffè, Pâté, Ménage';
+    // Suddividi le istruzioni in punti elenco
+    List<String> instructionSteps = widget.instructions
+        .split('\n')
+        .where((step) => step.trim().isNotEmpty)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -98,21 +101,13 @@ class _InstructionsPageState extends State<InstructionsPage> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    testString,
+                children: instructionSteps.map((step) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(
+                    '• $step',
                     style: GoogleFonts.openSans(fontSize: 18, color: Colors.black),
                   ),
-                  const SizedBox(height: 20),
-                  // Ripristina la visualizzazione dinamica dopo il test
-                  ...widget.instructions.split('\n').where((step) => step.trim().isNotEmpty).map((step) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Text(
-                      '• $step',
-                      style: GoogleFonts.openSans(fontSize: 18, color: Colors.black),
-                    ),
-                  )),
-                ],
+                )).toList(),
               ),
             ),
           ),
