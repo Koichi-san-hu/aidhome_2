@@ -8,7 +8,7 @@ L'**Assistente Personale** è un'applicazione sviluppata in Flutter progettata p
 
 ![Home Page](assets/images/home_page.png)
 ![Cucina Assistita](assets/images/cooking_page.png)
-![Istruzioni](assets/images/instructions_page.png)
+![Meteo](assets/images/meteo_page.png)
 
 ## Funzionalità
 
