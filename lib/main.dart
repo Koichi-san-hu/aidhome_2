@@ -11,6 +11,7 @@ import 'package:progetti/screens/auth_page.dart';
 import 'package:progetti/screens/email_verification_page.dart';
 import 'package:progetti/screens/home_screen.dart';
 import 'package:progetti/screens/instructions_page.dart'; // Ensure all pages are imported
+import 'package:progetti/screens/cooking_page.dart'; // Importa la nuova pagina se necessario
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -134,6 +135,8 @@ class MyApp extends StatelessWidget {
 
   Future<void> updateAndCacheData(Box box) async {
     final firestore = FirebaseFirestore.instance;
+
+    // Recupera i dati dalla collectionGroup 'Luoghi'
     final meteoConditionsSnapshot = await firestore.collectionGroup('Luoghi').get();
 
     print("Inizio del recupero dei dati da Firestore e memorizzazione in Hive.");
@@ -159,6 +162,37 @@ class MyApp extends StatelessWidget {
         print('Errore durante il salvataggio del documento $document: $e');
         continue; // Continua con il prossimo documento in caso di errore
       }
+    }
+
+    // Recupera gli Ingredienti dal percorso specificato
+    try {
+      DocumentReference ingredientiDocRef = firestore
+          .collection('Consigli')
+          .doc('Cucina')
+          .collection('Ingredienti')
+          .doc('EHABmvH4b5Wb65GFMkVz');
+
+      DocumentSnapshot ingredientiSnapshot = await ingredientiDocRef.get();
+
+      if (ingredientiSnapshot.exists) {
+        Map<String, dynamic>? ingredientiData = ingredientiSnapshot.data() as Map<String, dynamic>?;
+
+        if (ingredientiData != null && ingredientiData.containsKey('Ingredienti')) {
+          List<dynamic> ingredientiListDynamic = ingredientiData['Ingredienti'];
+          List<String> ingredientiList = ingredientiListDynamic.map((e) => e.toString()).toList();
+
+          print("Salvataggio degli ingredienti in Hive: $ingredientiList");
+
+          // Salva gli ingredienti nel box di Hive sotto la chiave 'cucinaIngredienti'
+          await box.put('cucinaIngredienti', ingredientiList);
+        } else {
+          print("Campo 'Ingredienti' non trovato nel documento.");
+        }
+      } else {
+        print("Documento degli Ingredienti non esiste.");
+      }
+    } catch (e) {
+      print('Errore durante il recupero degli Ingredienti: $e');
     }
 
     final newLastUpdate = DateTime.now().millisecondsSinceEpoch;
