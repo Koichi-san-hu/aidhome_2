@@ -2,7 +2,7 @@
 
 ## Descrizione
 
-L'**Assistente Personale** è un'applicazione sviluppata in Flutter progettata per aiutare le persone con disabilità cognitive a gestire le attività quotidiane. L'app offre supporto in vari compiti come cucinare, vestirsi, fare la spesa, allenarsi, pulire la casa e gestire la lavatrice, adattandosi alle esigenze specifiche degli utenti.
+**AidHome** è un'applicazione sviluppata in Flutter progettata per aiutare le persone con disabilità cognitive a gestire le attività quotidiane. L'app offre supporto in vari compiti come cucinare, vestirsi, fare la spesa, allenarsi, pulire la casa e gestire la lavatrice, adattandosi alle esigenze specifiche degli utenti.
 
 ## Screenshot
 
