@@ -39,6 +39,12 @@ class _CookingPageState extends State<CookingPage> {
   // Confetti Controller per l'effetto confetti
   late ConfettiController _confettiController;
 
+  // Definizione delle costanti dei colori
+  static const Color primaryBlue = Colors.blueAccent;
+  static const Color secondaryLightBlue = Colors.lightBlue;
+  static const Color chipSelectedColor = Colors.blueAccent;
+  static const Color chipUnselectedColor = Colors.lightBlue;
+
   @override
   void initState() {
     super.initState();
@@ -179,8 +185,7 @@ class _CookingPageState extends State<CookingPage> {
       // Mostra uno SnackBar in caso di errore durante la generazione delle istruzioni
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content:
-            Text('ERRORE NEL GENERARE LE ISTRUZIONI. RIPROVA.')),
+            content: Text('ERRORE NEL GENERARE LE ISTRUZIONI. RIPROVA.')),
       );
     } finally {
       if (mounted) {
@@ -205,9 +210,9 @@ class _CookingPageState extends State<CookingPage> {
         title: Text(
           'CUCINA ASSISTITA',
           style: GoogleFonts.openSans(
-              fontSize: 24, fontWeight: FontWeight.bold),
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: primaryBlue,
       ),
       body: GestureDetector(
         // Chiude la tastiera quando si tocca fuori dal TextField
@@ -223,7 +228,9 @@ class _CookingPageState extends State<CookingPage> {
               Text(
                 'SELEZIONA GLI INGREDIENTI DISPONIBILI:',
                 style: GoogleFonts.openSans(
-                    fontSize: 20, fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: primaryBlue),
               ),
               const SizedBox(height: 10),
               // Wrapping dei FilterChip degli ingredienti disponibili
@@ -263,9 +270,9 @@ class _CookingPageState extends State<CookingPage> {
                         _ingredientController.clear();
                       }
                     },
-                    child: const Icon(Icons.add),
+                    child: const Icon(Icons.add, color: Colors.white),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: primaryBlue,
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(12),
                     ),
@@ -281,26 +288,27 @@ class _CookingPageState extends State<CookingPage> {
                   Text(
                     'INGREDIENTI SELEZIONATI:',
                     style: GoogleFonts.openSans(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: primaryBlue),
                   ),
                   const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
-                    children: List.generate(
-                        _selectedIngredients.length, (index) {
-                      return Chip(
-                        label: Text(
-                          _selectedIngredients[index],
-                          style: GoogleFonts.openSans(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                        deleteIcon: const Icon(Icons.close),
-                        onDeleted: () => _removeIngredient(index),
-                        backgroundColor: Colors.teal.shade400,
-                        labelStyle:
-                        const TextStyle(color: Colors.white),
-                      );
-                    }),
+                    children: List.generate(_selectedIngredients.length,
+                            (index) {
+                          return Chip(
+                            label: Text(
+                              _selectedIngredients[index],
+                              style: GoogleFonts.openSans(
+                                  fontSize: 16, color: Colors.white),
+                            ),
+                            deleteIcon: const Icon(Icons.close),
+                            onDeleted: () => _removeIngredient(index),
+                            backgroundColor: chipSelectedColor,
+                            labelStyle: const TextStyle(color: Colors.white),
+                          );
+                        }),
                   ),
                 ],
               )
@@ -314,7 +322,9 @@ class _CookingPageState extends State<CookingPage> {
               Text(
                 'QUANTE PERSONE?',
                 style: GoogleFonts.openSans(
-                    fontSize: 20, fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: primaryBlue),
               ),
               const SizedBox(height: 10),
               TextField(
@@ -336,7 +346,9 @@ class _CookingPageState extends State<CookingPage> {
               Text(
                 'QUALI PORTATE VUOI PREPARARE?',
                 style: GoogleFonts.openSans(
-                    fontSize: 20, fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: primaryBlue),
               ),
               const SizedBox(height: 10),
               Column(
@@ -350,7 +362,7 @@ class _CookingPageState extends State<CookingPage> {
                     onChanged: (bool? value) {
                       _toggleCourseType(type, value ?? false);
                     },
-                    activeColor: Colors.teal,
+                    activeColor: primaryBlue,
                   );
                 }).toList(),
               ),
@@ -369,7 +381,7 @@ class _CookingPageState extends State<CookingPage> {
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: primaryBlue,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
@@ -385,11 +397,11 @@ class _CookingPageState extends State<CookingPage> {
                   blastDirectionality: BlastDirectionality.explosive,
                   shouldLoop: false,
                   colors: const [
-                    Colors.green,
-                    Colors.blue,
-                    Colors.pink,
+                    Colors.blueAccent,
+                    Colors.lightBlue,
+                    Colors.purple,
                     Colors.orange,
-                    Colors.purple
+                    Colors.blue
                   ],
                   numberOfParticles: 100,
                   maxBlastForce: 80,
@@ -428,9 +440,9 @@ class _CookingPageState extends State<CookingPage> {
         });
       },
       // Colore del Chip quando selezionato
-      selectedColor: Colors.teal.shade700,
+      selectedColor: chipSelectedColor,
       // Colore di sfondo del Chip quando non è selezionato
-      backgroundColor: Colors.teal,
+      backgroundColor: chipUnselectedColor,
       // Colore del checkmark
       checkmarkColor: Colors.white,
       // Nasconde il checkmark predefinito
