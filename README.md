@@ -1,16 +1,37 @@
-# aidhome_2
+# Assistente Personale per Persone con Disabilità Cognitive
 
-Un aiuto per chi ne ha bisogno
+## Descrizione
 
-## Getting Started
+L'**Assistente Personale** è un'applicazione sviluppata in Flutter progettata per aiutare le persone con disabilità cognitive a gestire le attività quotidiane. L'app offre supporto in vari compiti come cucinare, vestirsi, fare la spesa, allenarsi, pulire la casa e gestire la lavatrice, adattandosi alle esigenze specifiche degli utenti.
 
-This project is a starting point for a Flutter application.
+## Screenshot
 
-A few resources to get you started if this is your first Flutter project:
+![Home Page](assets/images/home_page.png)
+![Cucina Assistita](assets/images/cooking_page.png)
+![Istruzioni](assets/images/instructions_page.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Funzionalità
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Cucinare**: Assistenza nella preparazione dei pasti basata sugli ingredienti disponibili.
+- **Vestirsi**: Suggerimenti per l'abbigliamento in base al meteo attuale tramite OpenWeatherMap.
+- **Fare la Spesa**: Creazione di liste della spesa personalizzate.
+- **Allenamento**: Piani di allenamento su misura.
+- **Pulizia Casa**: Organizzazione delle attività di pulizia.
+- **Gestione Lavatrice**: Promemoria e istruzioni per l'uso della lavatrice.
+- **Sistema di Punteggio**: Incremento del punteggio utente al completamento delle attività.
+- **Effetto Confetti**: Feedback visivo celebrativo al completamento delle istruzioni.
+
+## Tecnologie Utilizzate
+
+- **Flutter**: Framework per lo sviluppo dell'app.
+- **Hive**: Database locale per la gestione dei dati utente.
+- **Confetti**: Libreria per effetti visivi celebrativi.
+- **Google Fonts**: Per una tipografia accattivante.
+- **OpenWeatherMap API**: Per ottenere dati meteorologici in tempo reale.
+
+## Installazione
+
+### Prerequisiti
+
+- **Flutter SDK**: Assicurati di avere Flutter installato. [Guida all'installazione di Flutter](https://flutter.dev/docs/get-started/install)
+- **Git**: Per clonare il repository.

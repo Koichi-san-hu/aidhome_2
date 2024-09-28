@@ -1,6 +1,9 @@
+// lib/services/weather_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Importa flutter_dotenv
+
 /*
   WeatherService - Servizio per la gestione delle chiamate API Meteo e della Geolocalizzazione
   Questa classe fornisce funzionalità essenziali per la mia app Flutter riguardanti il recupero dei dati meteo
@@ -27,22 +30,34 @@ import 'package:geolocator/geolocator.dart';
 */
 
 class WeatherService {
+  // Recupera l'API key dal file .env
+  final String? _apiKey = dotenv.env['OPENWEATHER_API_KEY'];
+
   Future<Map<String, dynamic>?> fetchWeatherData(double lat, double lon) async {
-    const apiKey = '9879e2c330c7c8b2792c6b386488198b';
-    final url = 'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=it';
+    if (_apiKey == null || _apiKey!.isEmpty) {
+      print('OpenWeatherMap API Key non trovata. Assicurati di averla configurata nel file .env.');
+      return null;
+    }
 
-    final response = await http.get(Uri.parse(url));
+    final url =
+        'https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=$_apiKey&units=metric&lang=it';
 
-    if (response.statusCode == 200) {
-      print("Dati ricevuti da OpenWeatherMap: ${response.body}");  // Aggiunto print qui
-      return json.decode(response.body);
-    } else {
-      print('Failed to load weather data. Status code: ${response.statusCode}');
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print("Dati ricevuti da OpenWeatherMap: ${response.body}"); // Log per debug
+        return json.decode(utf8.decode(response.bodyBytes)); // Usa utf8.decode
+      } else {
+        print('Failed to load weather data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}'); // Log per debug
+        return null;
+      }
+    } catch (e) {
+      print('Errore nella chiamata API OpenWeatherMap: $e');
       return null;
     }
   }
-
-
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
