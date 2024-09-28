@@ -118,12 +118,12 @@ class MyApp extends StatelessWidget {
     final lastUpdate = box.get('lastUpdate', defaultValue: 0);
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     const unaSettimanaInMillisecondi = 7 * 24 * 60 * 60 * 1000; // 7 giorni
-
+    const cinqueSecondiInMillisecondi = 5 * 1000; // 5 secondi
     // Stampa il tempo dell'ultimo aggiornamento e il tempo corrente per il controllo
     print("Ultimo aggiornamento: $lastUpdate");
     print("Tempo corrente: $currentTime");
 
-    if (currentTime - lastUpdate > unaSettimanaInMillisecondi) {
+    if (currentTime - lastUpdate > cinqueSecondiInMillisecondi) {
       print("È necessario aggiornare i dati.");
       await updateAndCacheData(box);
       print("Dati aggiornati correttamente.");

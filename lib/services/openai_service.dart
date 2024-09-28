@@ -19,7 +19,7 @@ class OpenAIService {
 
     // Costruisci il payload JSON
     Map<String, dynamic> jsonBody = {
-      "model": "gpt-4", // Assicurati che il modello sia corretto
+      "model": "gpt-4o-mini", // Assicurati che il modello sia corretto
       "messages": [
         {
           "role": "system",

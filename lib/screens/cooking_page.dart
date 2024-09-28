@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:progetti/services/cooking_service.dart';
 import 'package:progetti/screens/instructions_page.dart'; // Importa la nuova pagina
 import 'package:confetti/confetti.dart';
+import 'package:hive/hive.dart'; // Importa Hive
 
 class CookingPage extends StatefulWidget {
   const CookingPage({super.key});
@@ -14,77 +15,103 @@ class CookingPage extends StatefulWidget {
 
 class _CookingPageState extends State<CookingPage> {
   final CookingService _cookingService = CookingService();
-  List<String> _selectedIngredients = [];
-  bool _isLoading = false;
+  List<String> _selectedIngredients = []; // Lista degli ingredienti selezionati
+  bool _isLoading = false; // Stato di caricamento
 
   final TextEditingController _ingredientController = TextEditingController();
-  final TextEditingController _numberOfPeopleController = TextEditingController(text: '1');
+  final TextEditingController _numberOfPeopleController =
+  TextEditingController(text: '1');
 
-  // Lista predefinita di ingredienti disponibili
-  final List<String> _availableIngredients = [
-    'Pasta',
-    'Sugo al pomodoro',
-    'Formaggio',
-    'Carne',
-    'Olio',
-    'Sale',
-    'Pepe',
-    // Aggiungi altri ingredienti predefiniti qui
-  ];
+  List<String> _availableIngredients = []; // Lista degli ingredienti disponibili
 
   // Tipi di portata disponibili
   final List<String> _courseTypes = [
-    'Antipasto',
-    'Primo',
-    'Secondo',
-    'Dolce',
-    'Contorno',
-    'Bevanda',
+    'ANTIPASTO',
+    'PRIMO',
+    'SECONDO',
+    'DOLCE',
+    'CONTORNO',
+    'BEVANDA',
   ];
 
-  List<String> _selectedCourseTypes = [];
+  List<String> _selectedCourseTypes = []; // Lista dei tipi di portata selezionati
 
-  // Confetti Controller
+  // Confetti Controller per l'effetto confetti
   late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    // Inizializza il controller del confetti con una durata di 3 secondi
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
+    // Recupera gli ingredienti da Hive
+    _loadIngredientsFromHive();
   }
 
   @override
   void dispose() {
+    // Pulisce i controller quando il widget viene rimosso dallo stack
     _ingredientController.dispose();
     _numberOfPeopleController.dispose();
     _confettiController.dispose();
     super.dispose();
   }
 
+  /// Recupera gli ingredienti dalla box Hive
+  Future<void> _loadIngredientsFromHive() async {
+    try {
+      Box box = await Hive.openBox('consigliBox');
+      List<dynamic>? ingredientiDynamic = box.get('cucinaIngredienti');
+
+      if (ingredientiDynamic != null) {
+        setState(() {
+          // Converte la lista dinamica in lista di stringhe
+          _availableIngredients =
+              ingredientiDynamic.map((e) => e.toString()).toList();
+        });
+        print("Ingredienti caricati da Hive: $_availableIngredients");
+      } else {
+        print("Nessun ingrediente trovato in Hive.");
+        // Puoi impostare una lista di default o mostrare un messaggio all'utente
+      }
+    } catch (e) {
+      print("Errore nel caricamento degli ingredienti da Hive: $e");
+      // Puoi gestire l'errore mostrando un messaggio all'utente
+    }
+  }
+
+  /// Aggiunge un ingrediente alla lista selezionata
   void _addIngredient(String ingredient) {
     setState(() {
       if (!_selectedIngredients.contains(ingredient)) {
         _selectedIngredients.add(ingredient);
       } else {
+        // Mostra uno SnackBar se l'ingrediente è già stato aggiunto
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$ingredient è già stato aggiunto.')),
+          SnackBar(
+              content:
+              Text('${ingredient.toUpperCase()} È GIÀ STATO AGGIUNTO.')),
         );
       }
     });
   }
 
+  /// Rimuove un ingrediente dalla lista selezionata
   void _removeIngredient(int index) {
     if (index >= 0 && index < _selectedIngredients.length) {
       setState(() {
         _selectedIngredients.removeAt(index);
       });
     } else {
+      // Mostra uno SnackBar se l'indice non è valido
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ingrediente non trovato.')),
+        const SnackBar(content: Text('INGREDIENTE NON TROVATO.')),
       );
     }
   }
 
+  /// Alterna lo stato di selezione di un tipo di portata
   void _toggleCourseType(String courseType, bool isSelected) {
     setState(() {
       if (isSelected) {
@@ -95,35 +122,47 @@ class _CookingPageState extends State<CookingPage> {
     });
   }
 
+  /// Genera le istruzioni di cucina utilizzando i parametri selezionati
   void _generateInstructions() async {
     if (_selectedIngredients.isEmpty) {
+      // Mostra uno SnackBar se nessun ingrediente è stato selezionato
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Per favore, aggiungi almeno un ingrediente.')),
+        const SnackBar(
+            content: Text('PER FAVORE, AGGIUNGI ALMENO UN INGREDIENTE.')),
       );
       return;
     }
 
-    int numberOfPeople = int.tryParse(_numberOfPeopleController.text.trim()) ?? 1;
+    int numberOfPeople =
+        int.tryParse(_numberOfPeopleController.text.trim()) ?? 1;
     if (numberOfPeople < 1) {
+      // Mostra uno SnackBar se il numero di persone è inferiore a 1
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Il numero di persone deve essere almeno 1.')),
+        const SnackBar(
+            content: Text('IL NUMERO DI PERSONE DEVE ESSERE ALMENO 1.')),
       );
       return;
     }
 
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Avvia lo stato di caricamento
     });
 
     try {
-      // Genera le istruzioni
+      // Genera le istruzioni utilizzando il servizio CookingService
       String instructions = await _cookingService.generateCookingInstructions(
         _selectedIngredients,
         numberOfPeople,
         _selectedCourseTypes,
       );
 
-      // Naviga alla pagina delle istruzioni
+      // Verifica se il widget è ancora montato prima di utilizzare il BuildContext
+      if (!mounted) return;
+
+      // Avvia l'effetto confetti
+      _confettiController.play();
+
+      // Naviga alla pagina delle istruzioni passando le istruzioni generate
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -134,16 +173,25 @@ class _CookingPageState extends State<CookingPage> {
         ),
       );
     } catch (e) {
+      // Verifica se il widget è ancora montato prima di utilizzare il BuildContext
+      if (!mounted) return;
+
+      // Mostra uno SnackBar in caso di errore durante la generazione delle istruzioni
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Errore nel generare le istruzioni. Riprova.')),
+        const SnackBar(
+            content:
+            Text('ERRORE NEL GENERARE LE ISTRUZIONI. RIPROVA.')),
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false; // Termina lo stato di caricamento
+        });
+      }
     }
   }
 
+  /// Callback chiamata quando l'utente finisce di leggere le istruzioni
   void _onInstructionsFinished() {
     // Questa funzione è gestita in InstructionsPage per navigare e aggiungere punti
   }
@@ -151,145 +199,185 @@ class _CookingPageState extends State<CookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Assicurati che il layout si adatti quando la tastiera è aperta
+      // Adatta il layout quando la tastiera è aperta
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          'Cucina Assistita',
+          'CUCINA ASSISTITA',
           style: GoogleFonts.openSans(
               fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.teal,
       ),
       body: GestureDetector(
-        // Chiudi la tastiera quando si tocca fuori dal TextField
+        // Chiude la tastiera quando si tocca fuori dal TextField
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
-          // Aggiungi padding per evitare che il contenuto si sovrapponga con la tastiera
+          // Aggiunge padding per evitare che il contenuto si sovrapponga con la tastiera
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             // Allinea i widget per evitare problemi di overflow
             children: [
+              // Titolo sezione ingredienti
               Text(
-                'Seleziona gli ingredienti disponibili:',
+                'SELEZIONA GLI INGREDIENTI DISPONIBILI:',
                 style: GoogleFonts.openSans(
-                    fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
+              // Wrapping dei FilterChip degli ingredienti disponibili
               Wrap(
                 spacing: 10,
-                children: _availableIngredients.map((ingredient) =>
-                    _ingredientChip(ingredient)).toList(),
+                children: _availableIngredients
+                    .map((ingredient) =>
+                    _ingredientChip(ingredient.toUpperCase()))
+                    .toList(),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
+              // Campo di testo e bottone per aggiungere nuovi ingredienti
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _ingredientController,
                       decoration: const InputDecoration(
-                        hintText: 'Aggiungi un ingrediente',
+                        hintText: 'AGGIUNGI UN INGREDIENTE',
+                        hintStyle: TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(),
+                      ),
+                      style: GoogleFonts.openSans(
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
-                      String newIngredient = _ingredientController.text.trim();
+                      String newIngredient =
+                      _ingredientController.text.trim();
                       if (newIngredient.isNotEmpty) {
-                        _addIngredient(newIngredient);
+                        _addIngredient(newIngredient.toUpperCase());
                         _ingredientController.clear();
                       }
                     },
                     child: const Icon(Icons.add),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.teal,
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(12),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
+              // Visualizzazione degli ingredienti selezionati
               _selectedIngredients.isNotEmpty
-                  ? Wrap(
-                spacing: 8,
-                children: List.generate(_selectedIngredients.length, (index) {
-                  return Chip(
-                    label: Text(
-                      _selectedIngredients[index],
-                      style: GoogleFonts.openSans(fontSize: 16),
-                    ),
-                    deleteIcon: const Icon(Icons.close),
-                    onDeleted: () => _removeIngredient(index),
-                    backgroundColor: Colors.blueAccent.shade100,
-                    labelStyle: const TextStyle(color: Colors.white),
-                  );
-                }),
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'INGREDIENTI SELEZIONATI:',
+                    style: GoogleFonts.openSans(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    children: List.generate(
+                        _selectedIngredients.length, (index) {
+                      return Chip(
+                        label: Text(
+                          _selectedIngredients[index],
+                          style: GoogleFonts.openSans(
+                              fontSize: 16, color: Colors.white),
+                        ),
+                        deleteIcon: const Icon(Icons.close),
+                        onDeleted: () => _removeIngredient(index),
+                        backgroundColor: Colors.teal.shade400,
+                        labelStyle:
+                        const TextStyle(color: Colors.white),
+                      );
+                    }),
+                  ),
+                ],
               )
                   : Text(
-                'Nessun ingrediente selezionato.',
-                style: GoogleFonts.openSans(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Quante persone?',
+                'NESSUN INGREDIENTE SELEZIONATO.',
                 style: GoogleFonts.openSans(
-                    fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 30),
+              // Sezione per inserire il numero di persone
+              Text(
+                'QUANTE PERSONE?',
+                style: GoogleFonts.openSans(
+                    fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: _numberOfPeopleController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  hintText: 'Inserisci il numero di persone',
+                  hintText: 'INSERISCI IL NUMERO DI PERSONE',
+                  hintStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Quali portate vuoi preparare?',
                 style: GoogleFonts.openSans(
-                    fontSize: 18, fontWeight: FontWeight.bold),
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // Sezione per selezionare i tipi di portata
+              Text(
+                'QUALI PORTATE VUOI PREPARARE?',
+                style: GoogleFonts.openSans(
+                    fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Column(
                 children: _courseTypes.map((type) {
                   return CheckboxListTile(
                     title: Text(
-                      type,
+                      type.toUpperCase(),
                       style: GoogleFonts.openSans(fontSize: 16),
                     ),
                     value: _selectedCourseTypes.contains(type),
                     onChanged: (bool? value) {
                       _toggleCourseType(type, value ?? false);
                     },
+                    activeColor: Colors.teal,
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
+              // Bottone per generare le istruzioni
               ElevatedButton(
                 onPressed: _isLoading ? null : _generateInstructions,
                 child: _isLoading
                     ? const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor:
+                  AlwaysStoppedAnimation<Color>(Colors.white),
                 )
                     : Text(
-                  'Genera Istruzioni',
+                  'GENERA ISTRUZIONI',
                   style: GoogleFonts.openSans(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.teal,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
+              // Widget per l'effetto confetti
               Align(
                 alignment: Alignment.center,
                 child: ConfettiWidget(
@@ -313,29 +401,51 @@ class _CookingPageState extends State<CookingPage> {
       ),
     );
   }
-    Widget _ingredientChip(String ingredient) {
-      return Semantics(
-        label: ingredient,
-        button: true,
-        child: Chip(
-          label: Text(
-            ingredient,
-            style: GoogleFonts.openSans(fontSize: 16, color: Colors.white),
-          ),
-          backgroundColor: Colors.blueAccent,
-          deleteIcon: _selectedIngredients.contains(ingredient)
-              ? const Icon(Icons.close, color: Colors.white)
-              : const Icon(Icons.add, color: Colors.white),
-          onDeleted: () {
-            if (_selectedIngredients.contains(ingredient)) {
-              int index = _selectedIngredients.indexOf(ingredient);
-              _removeIngredient(index);
-            } else {
-              _addIngredient(ingredient);
-            }
-          },
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+  /// Crea un FilterChip per un ingrediente specifico
+  Widget _ingredientChip(String ingredient) {
+    final bool isSelected = _selectedIngredients.contains(ingredient);
+
+    return FilterChip(
+      // Etichetta del Chip
+      label: Text(
+        ingredient,
+        style: GoogleFonts.openSans(
+          fontSize: 16,
+          color: Colors.white,
         ),
-      );
-    }
+      ),
+      // Stato selezionato del Chip
+      selected: isSelected,
+      // Callback quando il Chip viene selezionato o deselezionato
+      onSelected: (bool selected) {
+        setState(() {
+          if (selected) {
+            _selectedIngredients.add(ingredient);
+          } else {
+            _selectedIngredients.remove(ingredient);
+          }
+        });
+      },
+      // Colore del Chip quando selezionato
+      selectedColor: Colors.teal.shade700,
+      // Colore di sfondo del Chip quando non è selezionato
+      backgroundColor: Colors.teal,
+      // Colore del checkmark
+      checkmarkColor: Colors.white,
+      // Nasconde il checkmark predefinito
+      showCheckmark: false,
+      // Stile del testo del Chip
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.white70,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      // Padding interno del Chip
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      // Forma arrotondata del Chip
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
   }
+}
