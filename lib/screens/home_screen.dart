@@ -37,7 +37,7 @@ class _PrimaPaginaState extends State<PrimaPagina> {
   Future<void> _loadCredits() async {
     final creditsBox = await Hive.openBox<int>('creditsBox');
     setState(() {
-      _credits = creditsBox.get('credits', defaultValue: 0)!;
+      _credits = creditsBox.get('credits', defaultValue: 10)!;
     });
   }
 
