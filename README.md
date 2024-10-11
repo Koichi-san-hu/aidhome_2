@@ -7,6 +7,7 @@
 ## Screenshot
 
 <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+  <img src="assets/images/home_page.png" alt="Home Page" style="width: 32%; margin-bottom: 10px;" />
   <img src="assets/images/cooking_page.png" alt="Cucina Assistita" style="width: 32%; margin-bottom: 10px;" />
   <img src="assets/images/meteo_page.png" alt="Meteo" style="width: 32%; margin-bottom: 10px;" />
 </div>
