@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "563477959801",
+    "firebase_url": "https://aidho-71d57-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "aidho-71d57",
+    "storage_bucket": "aidho-71d57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563477959801:android:b0bec75a6b386c1c2030a8",
+        "android_client_info": {
+          "package_name": "com.example.progetti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563477959801-41e1meorinf7pigbre18aqpljs8vh5lm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgRiDLN5Qz_SLTY4NJjcsMGMJmfsGtVrY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563477959801-41e1meorinf7pigbre18aqpljs8vh5lm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "563477959801-etigkq3bgbpn7rd5cb875r093g43e3h5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.progetti"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,8 +4,12 @@ import 'package:hive/hive.dart';
 import 'package:progetti/screens/weather_screen.dart';
 import 'package:progetti/screens/cooking_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // Import necessario
+import '../main.dart'; // Import per accedere a flutterLocalNotificationsPlugin
+import '../test_notification_page.dart'; // Importa la pagina di test delle notifiche
 
 import '../widgets/app_drawer.dart';
+
 
 class PrimaPagina extends StatefulWidget {
   const PrimaPagina({super.key});
@@ -40,6 +44,7 @@ class _PrimaPaginaState extends State<PrimaPagina> {
       _credits = creditsBox.get('credits', defaultValue: 10)!;
     });
   }
+  // Funzione per inviare una notifica immediata
 
   // Mostra un dialogo con informazioni su come aumentare il punteggio
   void _showScoreInfo(BuildContext context) {
@@ -229,13 +234,9 @@ class _PrimaPaginaState extends State<PrimaPagina> {
               child: GridView.count(
                 padding: const EdgeInsets.all(4),
                 crossAxisCount: 2,
-                // Due colonne
                 mainAxisSpacing: 1,
-                // Spazio verticale tra le righe
                 crossAxisSpacing: 1,
-                // Spazio orizzontale tra le colonne
                 childAspectRatio: 1.2,
-                // Regola l'aspetto delle celle
                 children: [
                   _buildSquareButtonPremium(
                       context, Icons.soup_kitchen, 'CUCINARE'),
@@ -255,9 +256,15 @@ class _PrimaPaginaState extends State<PrimaPagina> {
           ],
         ),
       ),
+      // Manteniamo il FloatingActionButton in basso a destra
+      floatingActionButton: FloatingActionButton(
+        onPressed: TestNotificationPage.sendNotification,
+        child: const Icon(Icons.notifications),
+        mini: true,
+        tooltip: 'Invia Notifica di Test',
+      ),
     );
   }
-
   // Metodo per costruire la sezione aggiornata di punteggio e crediti
   Widget _buildScoreAndCreditsSection() {
     return Container(
