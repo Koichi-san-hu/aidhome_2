@@ -10,8 +10,6 @@ import 'package:progetti/services/auth_service.dart';
 import 'package:progetti/screens/auth_page.dart';
 import 'package:progetti/screens/email_verification_page.dart';
 import 'package:progetti/screens/home_screen.dart';
-import 'package:progetti/screens/instructions_page.dart';
-import 'package:progetti/screens/cooking_page.dart';
 import 'firebase_options.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart'; // Importa il pacchetto per i permessi
