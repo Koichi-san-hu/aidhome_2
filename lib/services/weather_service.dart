@@ -1,5 +1,6 @@
 // lib/services/weather_service.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // Importa flutter_dotenv
@@ -35,7 +36,9 @@ class WeatherService {
 
   Future<Map<String, dynamic>?> fetchWeatherData(double lat, double lon) async {
     if (_apiKey == null || _apiKey!.isEmpty) {
-      print('OpenWeatherMap API Key non trovata. Assicurati di averla configurata nel file .env.');
+      if (kDebugMode) {
+        print('OpenWeatherMap API Key non trovata. Assicurati di averla configurata nel file .env.');
+      }
       return null;
     }
 
@@ -46,15 +49,23 @@ class WeatherService {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        print("Dati ricevuti da OpenWeatherMap: ${response.body}"); // Log per debug
+        if (kDebugMode) {
+          print("Dati ricevuti da OpenWeatherMap: ${response.body}");
+        } // Log per debug
         return json.decode(utf8.decode(response.bodyBytes)); // Usa utf8.decode
       } else {
-        print('Failed to load weather data. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}'); // Log per debug
+        if (kDebugMode) {
+          print('Failed to load weather data. Status code: ${response.statusCode}');
+        }
+        if (kDebugMode) {
+          print('Response body: ${response.body}');
+        } // Log per debug
         return null;
       }
     } catch (e) {
-      print('Errore nella chiamata API OpenWeatherMap: $e');
+      if (kDebugMode) {
+        print('Errore nella chiamata API OpenWeatherMap: $e');
+      }
       return null;
     }
   }

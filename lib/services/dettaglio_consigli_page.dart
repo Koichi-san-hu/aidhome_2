@@ -22,7 +22,7 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
   @override
   void initState() {
     super.initState();
-    _controller = ConfettiController(duration: Duration(seconds: 5));
+    _controller = ConfettiController(duration: const Duration(seconds: 5));
     _initHive();
   }
 
@@ -53,7 +53,7 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              return Text("Errore durante l'apertura del box Hive");
+              return const Text("Errore durante l'apertura del box Hive");
             } else {
               var box = snapshot.data;
               var key = 'Consigli/${widget.categoriaMeteo}/Luoghi/${widget.location}';
@@ -77,15 +77,15 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
               return Stack(
                 children: [
                   ListView(
-                    padding: EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(20.0),
                     children: [
                       for (var key in sortedKeys)
                         if (data.containsKey(key))
                           Card(
                             elevation: 3,
-                            margin: EdgeInsets.symmetric(vertical: 10.0),
+                            margin: const EdgeInsets.symmetric(vertical: 10.0),
                             child: Padding(
-                              padding: EdgeInsets.all(15.0),
+                              padding: const EdgeInsets.all(15.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -93,7 +93,7 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
                                     if (item is String)
                                       Text(
                                         '- ${item.toUpperCase()}',
-                                        style: TextStyle(fontSize: 26.0),
+                                        style: const TextStyle(fontSize: 26.0),
                                       ),
                                 ],
                               ),
@@ -123,7 +123,7 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
               );
             }
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -133,8 +133,8 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
           _incrementScore();
           _showConfettiDialog(context);
         },
-        label: Text('Ho finito'),
-        icon: Icon(Icons.check),
+        label: const Text('Ho finito'),
+        icon: const Icon(Icons.check),
       ),
     );
   }
@@ -148,19 +148,19 @@ class _DettaglioConsigliPageState extends State<DettaglioConsigliPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Congratulazioni!"),
-        content: Text("Complimenti! Hai completato l'azione."),
+        title: const Text("Congratulazioni!"),
+        content: const Text("Complimenti! Hai completato l'azione."),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Chiudi il dialogo
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => PrimaPagina()),
+                MaterialPageRoute(builder: (context) => const PrimaPagina()),
                     (route) => false,
               );
             },
-            child: Text("Chiudi"),
+            child: const Text("Chiudi"),
           ),
         ],
       ),

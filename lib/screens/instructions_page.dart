@@ -1,4 +1,5 @@
 // lib/screens/instructions_page.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:confetti/confetti.dart';
@@ -77,7 +78,9 @@ class _InstructionsPageState extends State<InstructionsPage> {
     if (_isHiveInitialized) {
       int currentScore = _scoreBox.get('score', defaultValue: 0)!;
       await _scoreBox.put('score', currentScore + 100);
-      print('CookingService - Punteggio incrementato a: ${currentScore + 100}');
+      if (kDebugMode) {
+        print('CookingService - Punteggio incrementato a: ${currentScore + 100}');
+      }
     }
   }
 

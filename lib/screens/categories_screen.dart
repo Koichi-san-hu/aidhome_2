@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -17,7 +18,7 @@ class _CategoriaMeteoPageState extends State<CategoriaMeteoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('DOVE DEVI ANDARE?'),
+        title: const Text('DOVE DEVI ANDARE?'),
       ),
       body: FutureBuilder<Box>(
         future: Hive.openBox('consigliBox'),
@@ -26,13 +27,15 @@ class _CategoriaMeteoPageState extends State<CategoriaMeteoPage> {
             var box = snapshot.data;
             var locations = box!.keys.where((key) => key.startsWith('Consigli/${widget.categoriaMeteo}/Luoghi')).toList();
             return Padding(
-              padding: EdgeInsets.all(26.0),
+              padding: const EdgeInsets.all(26.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: locations.map((locationKey) {
                   var location = _extractLocationName(locationKey);
-                  print('Location found: $location');
+                  if (kDebugMode) {
+                    print('Location found: $location');
+                  }
                   return ElevatedButton(
                     onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => DettaglioConsigliPage(categoriaMeteo: widget.categoriaMeteo, location: location),
