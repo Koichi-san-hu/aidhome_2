@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,8 +11,8 @@ import 'package:progetti/services/auth_service.dart';
 import 'package:progetti/screens/auth_page.dart';
 import 'package:progetti/screens/email_verification_page.dart';
 import 'package:progetti/screens/home_screen.dart';
-import 'package:progetti/screens/instructions_page.dart'; // Ho aggiunto l'import di questa pagina
-import 'package:progetti/screens/cooking_page.dart'; // Ho aggiunto l'import della nuova pagina per la sezione di cucina
+// Ho aggiunto l'import di questa pagina
+// Ho aggiunto l'import della nuova pagina per la sezione di cucina
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -20,9 +21,13 @@ Future<void> main() async {
   // Carico le variabili d'ambiente dal file .env
   try {
     await dotenv.load(fileName: ".env"); // Tenta di caricare il file .env contenente le variabili
-    print("File .env caricato correttamente."); // Debug: conferma il caricamento
+    if (kDebugMode) {
+      print("File .env caricato correttamente.");
+    } // Debug: conferma il caricamento
   } catch (e) {
-    print("Errore nel caricare il file .env: $e"); // Debug: indica un errore nel caricamento del file .env
+    if (kDebugMode) {
+      print("Errore nel caricare il file .env: $e");
+    } // Debug: indica un errore nel caricamento del file .env
     // Flutter non supporta la funzione 'exit', quindi devo gestire l'errore lanciando un'eccezione
     throw Exception('File .env non trovato. L\'app verrà terminata.');
   }
@@ -31,11 +36,15 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  print("Firebase inizializzato correttamente."); // Debug: conferma l'inizializzazione di Firebase
+  if (kDebugMode) {
+    print("Firebase inizializzato correttamente.");
+  } // Debug: conferma l'inizializzazione di Firebase
 
   // Inizializzo Hive per la gestione della cache
   await Hive.initFlutter();
-  print("Hive inizializzato correttamente."); // Debug: conferma l'inizializzazione di Hive
+  if (kDebugMode) {
+    print("Hive inizializzato correttamente.");
+  } // Debug: conferma l'inizializzazione di Hive
 
   runApp(MyApp()); // Avvio l'applicazione con la classe MyApp
 }
@@ -122,15 +131,25 @@ class MyApp extends StatelessWidget {
     const cinqueSecondiInMillisecondi = 5 * 1000; // 5 secondi in millisecondi (usato per debug)
 
     // Stampa di debug per controllare gli orari
-    print("Ultimo aggiornamento: $lastUpdate");
-    print("Tempo corrente: $currentTime");
+    if (kDebugMode) {
+      print("Ultimo aggiornamento: $lastUpdate");
+    }
+    if (kDebugMode) {
+      print("Tempo corrente: $currentTime");
+    }
 
     if (currentTime - lastUpdate > cinqueSecondiInMillisecondi) { // Se è passato più di 5 secondi dall'ultimo update
-      print("È necessario aggiornare i dati."); // Debug: richiede aggiornamento
+      if (kDebugMode) {
+        print("È necessario aggiornare i dati.");
+      } // Debug: richiede aggiornamento
       await updateAndCacheData(box); // Aggiorna i dati e li memorizza in cache
-      print("Dati aggiornati correttamente.");
+      if (kDebugMode) {
+        print("Dati aggiornati correttamente.");
+      }
     } else {
-      print("Non è necessario aggiornare i dati."); // Debug: aggiornamento non necessario
+      if (kDebugMode) {
+        print("Non è necessario aggiornare i dati.");
+      } // Debug: aggiornamento non necessario
     }
   }
 
@@ -140,12 +159,14 @@ class MyApp extends StatelessWidget {
 
     // Recupera tutti i documenti dalla collectionGroup 'Luoghi'
     final meteoConditionsSnapshot = await firestore.collectionGroup('Luoghi').get();
-    print("Inizio del recupero dei dati da Firestore e memorizzazione in Hive.");
+    if (kDebugMode) {
+      print("Inizio del recupero dei dati da Firestore e memorizzazione in Hive.");
+    }
 
     for (var document in meteoConditionsSnapshot.docs) {
       try {
         String hiveKey = document.reference.path; // Chiave di Hive basata sul percorso del documento
-        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        Map<String, dynamic> data = document.data();
 
         // Converti DocumentReference in stringa prima di salvare in Hive
         data = data.map((key, value) {
@@ -155,12 +176,16 @@ class MyApp extends StatelessWidget {
           return MapEntry(key, value);
         });
 
-        print("Salvataggio in Hive -> Chiave: $hiveKey, Dati: $data");
+        if (kDebugMode) {
+          print("Salvataggio in Hive -> Chiave: $hiveKey, Dati: $data");
+        }
 
         // Salva i dati nel box di Hive
         await box.put(hiveKey, data);
       } catch (e) {
-        print('Errore durante il salvataggio del documento $document: $e'); // Debug: errore durante il salvataggio
+        if (kDebugMode) {
+          print('Errore durante il salvataggio del documento $document: $e');
+        } // Debug: errore durante il salvataggio
         continue; // Continua con il prossimo documento in caso di errore
       }
     }
@@ -182,23 +207,33 @@ class MyApp extends StatelessWidget {
           List<dynamic> ingredientiListDynamic = ingredientiData['Ingredienti'];
           List<String> ingredientiList = ingredientiListDynamic.map((e) => e.toString()).toList();
 
-          print("Salvataggio degli ingredienti in Hive: $ingredientiList");
+          if (kDebugMode) {
+            print("Salvataggio degli ingredienti in Hive: $ingredientiList");
+          }
 
           // Salva gli ingredienti nel box di Hive sotto la chiave 'cucinaIngredienti'
           await box.put('cucinaIngredienti', ingredientiList);
         } else {
-          print("Campo 'Ingredienti' non trovato nel documento."); // Debug: errore nel documento
+          if (kDebugMode) {
+            print("Campo 'Ingredienti' non trovato nel documento.");
+          } // Debug: errore nel documento
         }
       } else {
-        print("Documento degli Ingredienti non esiste."); // Debug: documento non trovato
+        if (kDebugMode) {
+          print("Documento degli Ingredienti non esiste.");
+        } // Debug: documento non trovato
       }
     } catch (e) {
-      print('Errore durante il recupero degli Ingredienti: $e'); // Debug: errore durante il recupero degli ingredienti
+      if (kDebugMode) {
+        print('Errore durante il recupero degli Ingredienti: $e');
+      } // Debug: errore durante il recupero degli ingredienti
     }
 
     final newLastUpdate = DateTime.now().millisecondsSinceEpoch; // Nuovo timestamp dell'ultimo aggiornamento
     await box.put('lastUpdate', newLastUpdate); // Memorizza il timestamp dell'aggiornamento
 
-    print("Aggiornamento completato. Nuovo timestamp dell'ultimo aggiornamento: $newLastUpdate");
+    if (kDebugMode) {
+      print("Aggiornamento completato. Nuovo timestamp dell'ultimo aggiornamento: $newLastUpdate");
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:progetti/services/weather_service.dart';
@@ -40,7 +41,7 @@ class _MeteoPageState extends State<MeteoPage> {
       Map<String, dynamic>? fullWeatherData = await WeatherService().fetchWeatherData(position.latitude, position.longitude);
       if (fullWeatherData != null) {
         DateTime now = DateTime.now();
-        DateTime targetTime = now.add(Duration(hours: 3));
+        DateTime targetTime = now.add(const Duration(hours: 3));
         int index = fullWeatherData['list'].indexWhere((data) => DateTime.parse(data['dt_txt']).isAfter(targetTime));
         if (index != -1) {
           weatherData = fullWeatherData['list'][index];
@@ -48,7 +49,9 @@ class _MeteoPageState extends State<MeteoPage> {
         }
       }
     } catch (e) {
-      print('Errore durante il caricamento dei dati meteo: $e');
+      if (kDebugMode) {
+        print('Errore durante il caricamento dei dati meteo: $e');
+      }
     }
     setState(() {
       isLoading = false;
@@ -85,39 +88,39 @@ class _MeteoPageState extends State<MeteoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Meteo')),
+      appBar: AppBar(title: const Text('Meteo')),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : weatherData == null
-          ? Center(child: Text('Nessuna previsione disponibile per le prossime 3 ore'))
+          ? const Center(child: Text('Nessuna previsione disponibile per le prossime 3 ore'))
           : ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.thermostat),
+            leading: const Icon(Icons.thermostat),
             title: Text('Temperatura: ${weatherData!['main']['temp']} °C'),
           ),
           ListTile(
-            leading: Icon(Icons.cloud),
+            leading: const Icon(Icons.cloud),
             title: Text('Categoria Meteo: ${GlobalMeteoInfo()._categoriaMeteo}'),
           ),
           ListTile(
-            leading: Icon(Icons.beach_access),
+            leading: const Icon(Icons.beach_access),
             title: Text('Probabilità di Pioggia: ${weatherData!['pop'] * 100}%'),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             'ORA POTRAI SCEGLIERE DOVE DEVI ANDARE e PREPARARTI DI CONSEGUENZA 🌞🌧️',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 36),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () {
                 navigateToCategoriaMeteoPage(context);
               },
-              child: Text(
+              child: const Text(
                 'SONO PRONTO',
                 style: TextStyle(fontSize: 24),
               ),

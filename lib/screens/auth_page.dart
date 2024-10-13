@@ -280,7 +280,7 @@ class _AuthPageState extends State<AuthPage> {
         );
 
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => PrimaPagina()),
+          MaterialPageRoute(builder: (context) => const PrimaPagina()),
         );
       } else {
         // Logica di registrazione

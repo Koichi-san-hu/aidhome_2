@@ -152,10 +152,10 @@ class _PrimaPaginaState extends State<PrimaPagina> {
       } else {
         // Mostra un messaggio se non ci sono abbastanza crediti
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content:
             Text('Non hai abbastanza crediti per usare questa funzione.'),
-            duration: const Duration(seconds: 2),
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -283,7 +283,7 @@ class _PrimaPaginaState extends State<PrimaPagina> {
             onTap: () => _showCreditsInfo(context),
             child: Column(
               children: [
-                Icon(Icons.monetization_on, size: 40, color: Colors.white),
+                const Icon(Icons.monetization_on, size: 40, color: Colors.white),
                 const SizedBox(height: 5),
                 Text(
                   'CREDITI',
@@ -315,7 +315,7 @@ class _PrimaPaginaState extends State<PrimaPagina> {
             onTap: () => _showScoreInfo(context),
             child: Column(
               children: [
-                Icon(Icons.star, size: 40, color: Colors.white),
+                const Icon(Icons.star, size: 40, color: Colors.white),
                 const SizedBox(height: 5),
                 Text(
                   'PUNTEGGIO',

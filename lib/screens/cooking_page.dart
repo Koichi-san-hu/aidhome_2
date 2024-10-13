@@ -1,4 +1,5 @@
 // lib/screens/cooking_page.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:progetti/services/cooking_service.dart';
@@ -41,7 +42,6 @@ class _CookingPageState extends State<CookingPage> {
 
   // Definizione delle costanti dei colori
   static const Color primaryBlue = Colors.blueAccent;
-  static const Color secondaryLightBlue = Colors.lightBlue;
   static const Color chipSelectedColor = Colors.blueAccent;
   static const Color chipUnselectedColor = Colors.lightBlue;
 
@@ -76,13 +76,19 @@ class _CookingPageState extends State<CookingPage> {
           _availableIngredients =
               ingredientiDynamic.map((e) => e.toString()).toList();
         });
-        print("Ingredienti caricati da Hive: $_availableIngredients");
+        if (kDebugMode) {
+          print("Ingredienti caricati da Hive: $_availableIngredients");
+        }
       } else {
-        print("Nessun ingrediente trovato in Hive.");
+        if (kDebugMode) {
+          print("Nessun ingrediente trovato in Hive.");
+        }
         // Puoi impostare una lista di default o mostrare un messaggio all'utente
       }
     } catch (e) {
-      print("Errore nel caricamento degli ingredienti da Hive: $e");
+      if (kDebugMode) {
+        print("Errore nel caricamento degli ingredienti da Hive: $e");
+      }
       // Puoi gestire l'errore mostrando un messaggio all'utente
     }
   }

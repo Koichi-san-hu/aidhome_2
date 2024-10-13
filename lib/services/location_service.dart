@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 /*
@@ -25,7 +26,9 @@ class LocationService {
 
     if (status.isGranted) {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      print('Latitudine: ${position.latitude}, Longitudine: ${position.longitude}');
+      if (kDebugMode) {
+        print('Latitudine: ${position.latitude}, Longitudine: ${position.longitude}');
+      }
       // Qui posso fare qualcosa con la posizione ottenuta
     } else if (status.isDenied) {
       // Gestisco il caso in cui l'utente nega l'autorizzazione

@@ -48,7 +48,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       await _auth.currentUser!.reload();
       if (_auth.currentUser!.emailVerified) {
         timer.cancel();
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => PrimaPagina()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const PrimaPagina()));
       }
     });
   }
@@ -68,7 +68,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               onPressed: () async {
                 await _auth.currentUser!.reload();
                 if (_auth.currentUser!.emailVerified) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => PrimaPagina()));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const PrimaPagina()));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Per favore, conferma prima la tua email.')));
                 }

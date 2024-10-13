@@ -1,5 +1,6 @@
 // lib/services/openai_service.dart
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -10,7 +11,9 @@ class OpenAIService {
     if (_apiKey.isEmpty) {
       throw Exception('OpenAI API Key non trovata. Assicurati che il file .env sia configurato correttamente.');
     }
-    print('OpenAI API Key caricata correttamente.');
+    if (kDebugMode) {
+      print('OpenAI API Key caricata correttamente.');
+    }
   }
 
   /// Invia una richiesta all'API di OpenAI e ritorna la risposta come stringa.
@@ -49,10 +52,14 @@ class OpenAIService {
       // Usa utf8.decode per decodificare i bodyBytes
       final body = json.decode(utf8.decode(response.bodyBytes));
       String reply = body['choices'][0]['message']['content'].trim();
-      print('OpenAIService - Istruzioni ricevute: \n$reply'); // Log della risposta
+      if (kDebugMode) {
+        print('OpenAIService - Istruzioni ricevute: \n$reply');
+      } // Log della risposta
       return reply;
     } else {
-      print('OpenAIService - Errore: ${response.statusCode} - ${response.body}');
+      if (kDebugMode) {
+        print('OpenAIService - Errore: ${response.statusCode} - ${response.body}');
+      }
       throw Exception('Errore nella comunicazione con l\'API di OpenAI: ${response.statusCode}');
     }
   }

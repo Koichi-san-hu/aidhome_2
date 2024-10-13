@@ -1,4 +1,5 @@
 // lib/services/cooking_service.dart
+import 'package:flutter/foundation.dart';
 import 'package:progetti/services/openai_service.dart';
 
 class CookingService {
@@ -26,7 +27,9 @@ Fornisci istruzioni passo passo chiare e semplici su cosa deve fare e per quanto
       List<String> ingredients, int numberOfPeople, List<String> selectedCourseTypes) async {
     String prompt = buildPrompt(ingredients, numberOfPeople, selectedCourseTypes);
     // Log del prompt
-    print('CookingService - Prompt inviato: \n$prompt');
+    if (kDebugMode) {
+      print('CookingService - Prompt inviato: \n$prompt');
+    }
 
     try {
       // Invia il prompt all'API di OpenAI e ottieni la risposta
@@ -36,11 +39,15 @@ Fornisci istruzioni passo passo chiare e semplici su cosa deve fare e per quanto
         temperature: 0.7,
       );
       // Log della risposta
-      print('CookingService - Istruzioni ricevute: \n$instructions');
+      if (kDebugMode) {
+        print('CookingService - Istruzioni ricevute: \n$instructions');
+      }
       return instructions;
     } catch (e) {
       // Gestione degli errori
-      print('CookingService - Errore: $e');
+      if (kDebugMode) {
+        print('CookingService - Errore: $e');
+      }
       return 'Errore nel generare le istruzioni. Riprova.';
     }
   }
